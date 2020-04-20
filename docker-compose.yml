@@ -1,0 +1,15 @@
+version: '3'
+services:
+
+  api:
+    build: .
+    image: poloumniy-dom-api
+    ports:
+    - 16681:16681
+    restart: unless-stopped
+    networks:
+    - bot
+
+networks:
+  integration:
+    external: true
