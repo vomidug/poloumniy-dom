@@ -1,0 +1,4 @@
+{
+	telegramToken:"sampleToken"
+	databaseUri:"mongo://"
+}
