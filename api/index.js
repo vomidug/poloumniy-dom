@@ -4,11 +4,15 @@ const config = require('./config.json')
 const mongoUri = config.mongoUri;
 var axios = require('axios')
 
+
 mongoclient = new mongo(mongoUri, {useNewUrlParser: true, useUnifiedTopology:true})
 
 const PORT = process.env.port || 16681
 
 var app = express();
+
+var bodyParser = require('body-parser')
+app.use(bodyParser.json())
 
 function connect() {
 	return new Promise( (res, rej) => {
@@ -30,7 +34,8 @@ function log(text){
 		method: 'post',
 		url: 'http://newhouse_bot_1:16682/message/',
 		data: {
-			message:text
+			from:'api',
+			data:text
 		}
 	}).then( (res) => {
 		console.log('Successfully sent a message: ' + text)
@@ -51,6 +56,10 @@ app.get('/api/db/test', (req, res) => {
 			console.log('E', e)
 			res.sendStatus(500)
 		})
+})
+
+app.get('/api/conn/test/', (req, res) => {
+	log('Testing connection')
 })
 
 app.listen( PORT, () => {
