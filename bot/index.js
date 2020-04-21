@@ -32,7 +32,7 @@ app.post('/message', (req, res) => {
 bot.onText(/\/testConnection/, (msg) => {
 
 	axios({
-		url:'http://newhouse_api_1:16681/api/conn/test/',
+		url:'http://api:16681/api/conn/test/',
 		method:'get'
 	}).then( (res) => {
 
@@ -53,7 +53,7 @@ bot.onText(/\/status/, (msg) => {
 
 bot.onText(/\/testDB/, (msg) => {
 
-	axios.get('http://newhouse_api_1:16681/api/db/test/').then( (res) => {
+	axios.get('http://api:16681/api/db/test/').then( (res) => {
 
 		if(res.status === 200){
 			bot.sendMessage(boss, 'Mongo feels ok')

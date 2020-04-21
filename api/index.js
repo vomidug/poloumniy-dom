@@ -1,8 +1,11 @@
 var express = require('express')
 var mongo = require('mongodb').MongoClient;
 const config = require('./config.json')
+
 const mongoUri = config.mongoUri;
+
 var axios = require('axios')
+
 
 
 mongoclient = new mongo(mongoUri, {useNewUrlParser: true, useUnifiedTopology:true})
@@ -32,7 +35,7 @@ function log(text){
 	console.log(text)
 	axios({
 		method: 'post',
-		url: 'http://newhouse_bot_1:16682/message/',
+		url: 'http://bot:16682/message/',
 		data: {
 			from:'api',
 			data:text
