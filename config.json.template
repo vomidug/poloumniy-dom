@@ -1,4 +1,4 @@
 {
         "telegramToken":"someToken",
-        "mongoUri":"mongodb://user:passwd@host:port"
+        "mongoUri":"mongodb://mongo"
 }
