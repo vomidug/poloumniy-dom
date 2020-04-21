@@ -66,24 +66,34 @@ function register(device, ip){
 		},{
 			upsert:true
 		})
+		
+		.then( () => {
+			return cli.close()
+		}).catch( (err) => {
+			log('Unable to insert, throwing ' + err )
+			throw err
+		} )
+		//should it work like that?
 
-		return cli
+		//return cli.close()
 
 	})	
-	
+	/*
 	.then( (cli) => {
 		cli.close( () => {
 			log('Closing connection after trying to update a ' + device)
 		})
-	}).catch( (err) => {
+	})
+	
+	.catch( (err) => {
 		log('Unable to connect to Mongo, throwing' + err)
 		throw err
 	})
-
+	*/	
 	.then(() => { 
 		axios({
 			method:'post',
-			url:'http://bot/registered/',
+			url:'http://bot:16682/registered/',
 			data:{device, ip, date}
 		}).then( (res) => {
 			if(res === 200) {
