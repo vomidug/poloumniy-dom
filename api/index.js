@@ -5,8 +5,6 @@ const mongoUri = config.mongoUri;
 
 mongoclient = new mongo(mongoUri, {useNewUrlParser: true, useUnifiedTopology:true})
 
-
-
 var app = express();
 
 function connect() {
