@@ -1,6 +1,7 @@
 var TelegramBot = require('node-telegram-bot-api');
 var config = require('./config.json')
-const token = config.token
+
+const token = config.telegramToken
 
 var bot = new TelegramBot(token, {polling: true})
 
@@ -22,13 +23,13 @@ app.post('/message', (req, res) => {
 	bot.sendMessage(boss, req.body.data)
 })
 
-bot.onMessage(/\/status/, (msg) => {
+bot.onText(/\/status/, (msg) => {
 
 	//axios.get('localhost:16681:/api/db/listAll')
 
 })
 
-bot.onMessage(/\/testDB/, (msg) => {
+bot.onText(/\/testDB/, (msg) => {
 
 	axios.get('localhost:16681:/api/db/test').then( (res) => {
 	
