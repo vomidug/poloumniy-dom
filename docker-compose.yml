@@ -4,6 +4,8 @@ services:
   api:
     build: api/
     restart: unless-stopped
+    ports:
+    - 16681:16681
     networks:
     - bot
     depends_on: 
