@@ -23,9 +23,13 @@ function log(text){
 } 
 
 app.post('/message', (req, res) => {
-
 	bot.sendMessage(boss, 'A message from ' + req.body.from + '\n' + req.body.data)
+	res.sendStatus(200)
+})
 
+app.post('/registered', (req, res) => {
+	bot.sendMessage(boss, `${req.body.device} got online.\n IP: ${req.body.ip}\n${req.body.date}`)
+	res.sendStatus(200)
 })
 
 bot.onText(/\/testConnection/, (msg) => {
