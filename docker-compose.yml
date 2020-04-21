@@ -3,9 +3,15 @@ services:
 
   api:
     build: .
-    image: poloumniy-dom-api
     ports:
     - 16681:16681
+    restart: unless-stopped
+    networks:
+    - bot
+
+  bot:
+    build: .
+    ports: 16682:16682
     restart: unless-stopped
     networks:
     - bot
