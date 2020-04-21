@@ -31,18 +31,19 @@ bot.onText(/\/status/, (msg) => {
 
 bot.onText(/\/testDB/, (msg) => {
 
-	axios.get('localhost:16681:/api/db/test').then( (res) => {
+	axios.get('newhouse_api_1:16681/api/db/test/').then( (res) => {
 	
 		log('Res: ' + res)
 
 	}).catch( (e) => {
 
 		log('E: ' + e)
+		throw(e)
 
 	} )
 
 })
 
 app.listen(PORT, () => {
-	log(`App is listening on port ${PORT}`)
+	log(`Bot is listening on port ${PORT}`)
 })

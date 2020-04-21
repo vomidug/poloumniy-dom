@@ -28,7 +28,7 @@ function log(text){
 	console.log(text)
 	axios({
 		method: 'post',
-		url: 'http://localhost:16682/message',
+		url: 'http://newhouse_bot_1:16682/message/',
 		data: {
 			message:text
 		}
@@ -41,7 +41,7 @@ function log(text){
 	} )
 }
 
-app.get('api/db/test', (req, res) => {
+app.get('/api/db/test', (req, res) => {
 	connect()
 		.then( (cli) => {
 			console.log('MongoDB is connected')
@@ -54,5 +54,5 @@ app.get('api/db/test', (req, res) => {
 })
 
 app.listen( PORT, () => {
-	log('App is listening on port ' + PORT)
+	log('Api is listening on port ' + PORT)
 } )
