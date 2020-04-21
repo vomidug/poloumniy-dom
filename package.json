@@ -1,0 +1,26 @@
+{
+  "name": "newhouse",
+  "version": "1.0.0",
+  "description": "vomidug's smart home base",
+  "main": "docker-compose.yml",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "express": "^4.17.1",
+    "mongodb": "^3.5.6",
+    "node-telegram-bot-api": "^0.40.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vomidug/poloumniy-dom.git"
+  },
+  "author": "vomidug",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vomidug/poloumniy-dom/issues"
+  },
+  "homepage": "https://github.com/vomidug/poloumniy-dom#readme"
+}
