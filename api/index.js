@@ -52,7 +52,9 @@ function register(device, ip){
 
 	var date = new Date()
 
-	date.setHours(18)
+	date.setHours(date.getHours()+3)
+
+	var dateStr = `${date.getHours()+1}:${date.getMinutes()+1}:${date.getSeconds()+1} ${date.getDate()}.${date.getMonth()+1}.${date.getFullYear()}`
 
 	connect().then( (cli) => {
 
@@ -61,7 +63,8 @@ function register(device, ip){
 		},{ 
 			$set: {
 				status:'Online',
-				lastauth:date
+				lastauth:dateStr,
+				ip:ip
 			}
 		},{
 			upsert:true
@@ -106,6 +109,22 @@ function register(device, ip){
 	})
 
 }
+
+app.get('/api/db/getAll', (req, res) => {
+
+	connect().
+		then( (cli) => {
+			cli.db('house').collection('devices').find().toArray()
+				.then( (resp) => {
+					res.send(resp)
+				} )
+				.catch( (err) => {
+					log('Unable to query a db, throwing ' + err)
+					throw err
+				} )
+		} )
+
+})
 
 app.get('/api/db/test', (req, res) => {
 	connect()

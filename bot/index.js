@@ -50,7 +50,23 @@ bot.onText(/\/testConnection/, (msg) => {
 
 bot.onText(/\/status/, (msg) => {
 
-	//axios.get('localhost:16681:/api/db/listAll')
+	axios.get('http://api:16681/api/db/getAll')
+		.then( (res) => {
+			log('Successfully got a response of getAll: ' + JSON.stringify(res.data))
+
+			var resString = ''
+			
+			for (i of res.data) {
+				resString = resString + `${i.name}: ${i.status}\nLast Auth: ${i.lastauth}\nIP: ${i.ip.split(':')[3]}\n\n`
+			}
+
+			bot.sendMessage(boss, resString)
+
+	})
+		.catch( (err) => {
+			log('Unable to perform GET-request to getAll, throwing ' + err)
+			throw err
+		} )
 
 })
 
