@@ -17,16 +17,6 @@ app.use(bodyParser.json())
 
 function connect() {
 	return new Promise( (res, rej) => {
-		/*
-		mongoclient.connect((err, cli) => {
-			if(err) {
-				rej(err)
-				throw err;
-			} else {
-				res(cli)
-			}
-		})
-		*/
 		
 		new mongo(mongoUri, {useNewUrlParser: true, useUnifiedTopology:true}).connect().then( (cli) => {
 			res(cli)
@@ -36,17 +26,6 @@ function connect() {
 			rej(err)
 		} )
 
-		/*
-		mongoclient.connect().then( (cli) => {
-			res(cli)
-		} ).catch( (err) => {
-			log('Unable to establish connection, throwing ' + err)
-			throw err
-			rej(err)
-		})
-		*/
-
-
 	} )
 }
 
@@ -54,7 +33,7 @@ function log(text){
 
 	console.log(text)
 
-	/*
+	
 	axios({
 		method: 'post',
 		url: 'http://bot:16682/message/',
@@ -68,17 +47,18 @@ function log(text){
 		console.log('E: Unable to send a message: ' + text)
 		console.log('E: Throwing ' + e)
 		throw e
-	} )*/
+	} )
 }
+
 
 function checkExistance(device) {
 
 		log('Trying to check ' + device.name )
-
 			connect()
 				.then( (cli) => {
 			
-					cli.db('house').collection('devices').findOne( {
+					return cli.db('house').collection('devices').findOne( {
+
 						name:device.name
 					} )
 						.then( (res) => {
@@ -92,7 +72,6 @@ function checkExistance(device) {
 								log(device.name + ' doesn\'t exist')
 								return true
 							}
-
 						} )
 						.catch( (err) => {
 							log('Unable to perform a query to find ' + device + ', throwing ' + err)
@@ -106,7 +85,6 @@ function checkExistance(device) {
 	return false
 	
 }
-
 function register(device){
 	
 	connect().then( (cli) => {
@@ -115,6 +93,7 @@ function register(device){
 			name:device.name
 		},{ 
 			$set: {
+
 				status:"Online",
 				date:device.date,
 				ip:device.ip
@@ -130,16 +109,6 @@ function register(device){
 			})
 		})
 	
-		/*
-		.then( () => {
-			log('Updating ' + device.name + 'is successful')
-		}).catch( (err) => {
-			log('Unable to insert, throwing ' + err )
-			throw err
-		})
-
-		*/
-
 	})	
 
 	.catch( (err) => {
@@ -153,6 +122,7 @@ function register(device){
 			data:device
 		}).then( (res) => {
 			if(res.status === 200) {
+
 				log('Successfully registered ' + device.name + ' with ' + device.ip + ' at ' + device.date) 
 
 			} else{
@@ -170,6 +140,7 @@ app.get('/api/db/getAll', (req, res) => {
 
 	connect()
 		.then( (cli) => {
+
 			return cli.db('house').collection('devices').find().toArray()
 				.then( (resp) => {
 					res.send(resp)
@@ -200,6 +171,7 @@ app.post('/api/register/', (req, res) => {
 
 	log(JSON.stringify(req.body))
 
+
 	date = new Date()
 	date.setHours(date.getHours()+3)
 
@@ -214,7 +186,6 @@ app.post('/api/register/', (req, res) => {
 	//} else {
 		
 	//}
-	
 
 	res.sendStatus(200)
 
