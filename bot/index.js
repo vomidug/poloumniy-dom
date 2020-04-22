@@ -57,7 +57,13 @@ bot.onText(/\/status/, (msg) => {
 			var resString = ''
 			
 			for (i of res.data) {
-				resString = resString + `${i.name}: ${i.status}\nLast Auth: ${i.lastauth}\nIP: ${i.ip.split(':')[3]}\n\n`
+
+				i.dateStr = `${i.date.getHours()+1}:${i.date.getMinutes()+1}:${i.date.getSeconds()+1} ${i.date.getDate()}.${i.date.getMonth()+1}.${i.date.getFullYear()}`
+
+				resString = resString + 
+					`${i.name}: ${i.status}\n` + 
+					`Last Auth: ${i.dateStr}\n` +
+					`IP: ${i.ip.split(':')[3]}\n\n`
 			}
 
 			bot.sendMessage(boss, resString)

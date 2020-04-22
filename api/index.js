@@ -47,6 +47,38 @@ function log(text){
 	} )
 }
 
+function check(device) {
+
+		log('Trying to check ' + device )
+
+			connect()
+				.then( (cli) => {
+			
+					cli.db('house').collection('devices').findOne( {
+						name:device
+					} )
+						.then( (res) => {
+						
+							if(res){
+								return true
+							}
+							if(false){
+								return false
+							}
+
+						} )
+						.catch( (err) => {
+							log('Unable to perform a query to find ' + device + ', throwing ' + err)
+							throw err
+						} )
+				} )
+				.catch( (err) => {
+					log('Unable to check ' + device + ', throwing ' + err)
+				} )
+
+	return false
+	
+}
 
 function register(device, ip){
 
@@ -63,7 +95,7 @@ function register(device, ip){
 		},{ 
 			$set: {
 				status:'Online',
-				lastauth:dateStr,
+				date:dateStr,
 				ip:ip
 			}
 		},{
@@ -99,6 +131,7 @@ function register(device, ip){
 		}).then( (res) => {
 			if(res.status === 200) {
 				log('Successfully registered ' + device + ' with ' + ip + ' at ' + date) 
+
 			} else{
 				log('Res is not 200, it is ' + res.status + ', please, check.')
 			}
@@ -112,8 +145,8 @@ function register(device, ip){
 
 app.get('/api/db/getAll', (req, res) => {
 
-	connect().
-		then( (cli) => {
+	connect()
+		.then( (cli) => {
 			cli.db('house').collection('devices').find().toArray()
 				.then( (resp) => {
 					res.send(resp)
@@ -144,7 +177,16 @@ app.post('/api/register/', (req, res) => {
 
 	log(JSON.stringify(req.body))
 
-	register(req.body.id, ip)
+	var device = {
+
+	}
+
+	check(req.body.id)
+		//register(req.body.id, ip)
+	} else{
+
+	}
+
 
 	res.sendStatus(200)
 
