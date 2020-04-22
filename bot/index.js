@@ -28,8 +28,10 @@ app.post('/message', (req, res) => {
 })
 
 app.post('/registered', (req, res) => {
-	bot.sendMessage(boss, `${req.body.device} got online.\n IP: ${req.body.ip}\n${req.body.date}`)
+
+	bot.sendMessage(boss, `${req.body.name} got online.\nIP: ${req.body.ip.split(':')[3]}\n${req.body.date}`)
 	res.sendStatus(200)
+
 })
 
 bot.onText(/\/testConnection/, (msg) => {
@@ -48,6 +50,50 @@ bot.onText(/\/testConnection/, (msg) => {
 
 } )
 
+bot.onText(/\/testSomeShit/, ( msg ) => {
+
+	axios({
+		method:'post',
+		url:'http://api:16681/api/register',
+		data:{
+			id:'Someshit'
+		}
+	})
+		.then(( res ) => {
+		if(res.status === 200){
+			log('Successfully tested to register someShit')
+		}
+	})
+		.catch( (err) => {
+			log('Unable to test registering someShit, throwing ' + err )
+			throw err;
+		} )
+
+ 
+})
+
+bot.onText(/\/testArch/, ( msg ) => {
+
+	axios({
+		method:'post',
+		url:'http://api:16681/api/register',
+		data:{
+			id:'Archlinux'
+		}
+	})
+		.then(( res ) => {
+		if(res.status === 200){
+			log('Successfully tested to register Archlinux')
+		}
+	})
+		.catch( (err) => {
+			log('Unable to test registering Archlinux, throwing ' + err )
+			throw err;
+		} )
+
+ 
+})
+
 bot.onText(/\/status/, (msg) => {
 
 	axios.get('http://api:16681/api/db/getAll')
@@ -57,7 +103,15 @@ bot.onText(/\/status/, (msg) => {
 			var resString = ''
 			
 			for (i of res.data) {
-				resString = resString + `${i.name}: ${i.status}\nLast Auth: ${i.lastauth}\nIP: ${i.ip.split(':')[3]}\n\n`
+
+				i.date = new Date(i.date)
+
+				i.dateStr = `${i.date.getHours()+1}:${i.date.getMinutes()+1}:${i.date.getSeconds()+1} ${i.date.getDate()}.${i.date.getMonth()+1}.${i.date.getFullYear()}`
+
+				resString = resString + 
+					`${i.name}: ${i.status}\n` + 
+					`Last Auth: ${i.dateStr}\n` +
+					`IP: ${i.ip.split(':')[3]}\n\n`
 			}
 
 			bot.sendMessage(boss, resString)
