@@ -17,6 +17,7 @@ app.use(bodyParser.json())
 
 function connect() {
 	return new Promise( (res, rej) => {
+		/*
 		mongoclient.connect((err, cli) => {
 			if(err) {
 				rej(err)
@@ -25,12 +26,35 @@ function connect() {
 				res(cli)
 			}
 		})
+		*/
+		
+		new mongo(mongoUri, {useNewUrlParser: true, useUnifiedTopology:true}).connect().then( (cli) => {
+			res(cli)
+		} ).catch( (err) => {
+			log('Unable to establish connection, throwing ' + err)
+			throw err
+			rej(err)
+		} )
+
+		/*
+		mongoclient.connect().then( (cli) => {
+			res(cli)
+		} ).catch( (err) => {
+			log('Unable to establish connection, throwing ' + err)
+			throw err
+			rej(err)
+		})
+		*/
+
+
 	} )
 }
 
 function log(text){
 
 	console.log(text)
+
+	/*
 	axios({
 		method: 'post',
 		url: 'http://bot:16682/message/',
@@ -44,66 +68,98 @@ function log(text){
 		console.log('E: Unable to send a message: ' + text)
 		console.log('E: Throwing ' + e)
 		throw e
-	} )
+	} )*/
 }
 
+function checkExistance(device) {
 
-function register(device, ip){
+		log('Trying to check ' + device.name )
 
-	var date = new Date()
+			connect()
+				.then( (cli) => {
+			
+					cli.db('house').collection('devices').findOne( {
+						name:device.name
+					} )
+						.then( (res) => {
+						
+							if(res) {
+								log(device.name + ' exists')
 
-	date.setHours(date.getHours()+3)
+								return false
+							}
+							else {
+								log(device.name + ' doesn\'t exist')
+								return true
+							}
 
-	var dateStr = `${date.getHours()+1}:${date.getMinutes()+1}:${date.getSeconds()+1} ${date.getDate()}.${date.getMonth()+1}.${date.getFullYear()}`
+						} )
+						.catch( (err) => {
+							log('Unable to perform a query to find ' + device + ', throwing ' + err)
+							throw err
+						} )
+				} )
+				.catch( (err) => {
+					log('Unable to check ' + device + ', throwing ' + err)
+				} )
 
+	return false
+	
+}
+
+function register(device){
+	
 	connect().then( (cli) => {
 
-		cli.db('house').collection('devices').updateOne({
-			name:device
+		return cli.db('house').collection('devices').updateOne({
+			name:device.name
 		},{ 
 			$set: {
-				status:'Online',
-				lastauth:dateStr,
-				ip:ip
+				status:"Online",
+				date:device.date,
+				ip:device.ip
 			}
 		},{
 			upsert:true
 		})
+
+		
 		.then( () => {
-			log('Updating ' + device + 'is successful')
+			cli.close( () => {
+				log('Closing connection after trying to update a ' + device.name)
+			})
+		})
+	
+		/*
+		.then( () => {
+			log('Updating ' + device.name + 'is successful')
 		}).catch( (err) => {
 			log('Unable to insert, throwing ' + err )
 			throw err
 		})
 
-		return cli 
+		*/
+
 	})	
 
 	.catch( (err) => {
 		log('Unable to connect to Mongo, throwing' + err)
-		throw err
 	})
 
-	.then( (cli) => {
-		cli.close( () => {
-			log('Closing connection after trying to update a ' + device)
-		})
-	})
-	
-		
 	.then(() => { 
 		axios({
 			method:'post',
 			url:'http://bot:16682/registered/',
-			data:{device, ip, date}
+			data:device
 		}).then( (res) => {
 			if(res.status === 200) {
-				log('Successfully registered ' + device + ' with ' + ip + ' at ' + date) 
+				log('Successfully registered ' + device.name + ' with ' + device.ip + ' at ' + device.date) 
+
 			} else{
 				log('Res is not 200, it is ' + res.status + ', please, check.')
 			}
 		}).catch( (err) => {
-			log('Unable to register ' + device + ' with ' + ip + ' at ' + date + '\n Throwing ' + err)
+			log('Unable to register ' + device.name + ' with ' + device.ip + ' at ' + device.date + '\n Throwing ' + err)
 			throw err
 		})
 	})
@@ -112,9 +168,9 @@ function register(device, ip){
 
 app.get('/api/db/getAll', (req, res) => {
 
-	connect().
-		then( (cli) => {
-			cli.db('house').collection('devices').find().toArray()
+	connect()
+		.then( (cli) => {
+			return cli.db('house').collection('devices').find().toArray()
 				.then( (resp) => {
 					res.send(resp)
 				} )
@@ -144,7 +200,21 @@ app.post('/api/register/', (req, res) => {
 
 	log(JSON.stringify(req.body))
 
-	register(req.body.id, ip)
+	date = new Date()
+	date.setHours(date.getHours()+3)
+
+	var device = {
+		name:req.body.id,
+		date:date,
+		ip:ip
+	}
+
+	//if (checkExistance(device)){	
+	register(device)
+	//} else {
+		
+	//}
+	
 
 	res.sendStatus(200)
 
