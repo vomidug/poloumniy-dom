@@ -5,8 +5,12 @@ services:
     build: api/
     restart: unless-stopped
     networks:
-    - housebot
-    - main
+      main:
+        aliases:
+         - housebot
+      housebot:
+        aliases:
+         - api
     depends_on: 
     - bot
     - mongo
@@ -15,8 +19,9 @@ services:
     build: bot/
     restart: unless-stopped
     networks:
-    - housebot
-    - main
+      housebot:
+        aliases:
+          - bot
 
   mongo:
     image: 'mongo'
@@ -24,7 +29,10 @@ services:
     volumes:
     - mongo:/var/lib/mongodb
     networks:
-    - housebot
+      housebot:
+        aliases:
+          - mongo
+
 
 volumes:
   mongo:
