@@ -26,6 +26,8 @@ services:
   mongo:
     image: 'mongo'
     restart: always
+    ports:
+    - 12345:27017
     volumes:
     - mongo:/var/lib/mongodb
     networks:
