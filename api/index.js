@@ -29,6 +29,22 @@ function connect() {
 	} )
 }
 
+function get(url, params){
+        return axios({
+                method:"GET",
+                url:url,
+                params:params
+        })
+}
+
+function post(url, data){
+        return axios({
+                method:"POST",
+                url:url,
+                data:data
+        })
+}
+
 function log(text){
 
 	console.log(text)
