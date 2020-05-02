@@ -43,11 +43,14 @@ app.post('/message', (req, res) => {
 	res.sendStatus(200)
 })
 
-app.post('/registered', (req, res) => {
+app.post('/api/bot/update', (req, res) => {
+	bot.sendMessage(boss, `${req.body.name} got back online!\nIP: ${req.body.ip}\nDate:${req.body.date}`)
+	res.sendStatus(200);
+})
 
-	bot.sendMessage(boss, `${req.body.name} got online.\nIP: ${req.body.ip}\n${req.body.date}`)
+app.post('/api/bot/register', (req, res) => {
+	bot.sendMessage(boss, `New device: ${req.body.name}\nIP: ${req.body.ip}\nDate:${req.body.date}`)
 	res.sendStatus(200)
-
 })
 
 bot.onText(/\/testConnection/, (msg) => {

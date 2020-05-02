@@ -65,50 +65,87 @@ function log(text){
 	} )
 }
 
+function checkExistance(device){
 
-function checkExistance(device) {
+	log('Checking existance of ' + device.name)
 
-		log('Trying to check ' + device.name )
-			connect()
-				.then( (cli) => {
+	return connect()
+		.then( (cli) => {
+
+			return cli.db("house").collection('devices').findOne( {
+				name:device.name
+			} )
 			
-					return cli.db('house').collection('devices').findOne( {
+				.then ( (res) => {
 
-						name:device.name
-					} )
-						.then( (res) => {
-						
-							if(res) {
-								log(device.name + ' exists')
+					if(res) {
+						log(device.name + " exists")
+						return true;
+					} else {
+						log(device.name + " does not exist")
+						return false;
+					}
 
-								return false
-							}
-							else {
-								log(device.name + ' doesn\'t exist')
-								return true
-							}
-						} )
-						.catch( (err) => {
-							log('Unable to perform a query to find ' + device + ', throwing ' + err)
-							throw err
-						} )
+				} )
+				.catch( (e) => {
+					console.log(e)
+					throw (e)
+				} )
+		} )
+}
+
+function checkOnline(device) {
+
+	var minutesCount = 2;
+
+	log('Trying to check if ' + device.name + ' is online' )
+	return connect()
+		.then( (cli) => {
+		
+			return cli.db('house').collection('devices').findOne( {
+				name:device.name
+			} )
+				.then( (res) => {
+
+					curdate = Date.now();
+
+					deviceDate = device.date.getTime();
+
+					console.log(curdate)
+					console.log(deviceDate)
+
+					if ( curdate - 1000 * 60 * minutesCount < deviceDate) {
+						log(device.name + ' is online')
+						return true;
+					}
+					else {
+						log(device.name + ' is not online')
+						return false;
+					}
+									
 				} )
 				.catch( (err) => {
-					log('Unable to check ' + device + ', throwing ' + err)
+					log('Unable to perform a query to find ' + device + ', throwing ' + err)
+					throw err
 				} )
-
-	return false
+		} )
+		.catch( (err) => {
+			log('Unable to check ' + device + ', throwing ' + err)
+			throw(err)
+		} )
 	
 }
+
 function register(device){
 	
-	connect().then( (cli) => {
+	log('Registering/updating ' + device.name)
+
+	return connect().then( (cli) => {
 
 		return cli.db('house').collection('devices').updateOne({
 			name:device.name
 		},{ 
 			$set: {
-
 				status:"Online",
 				date:device.date,
 				ip:device.ip
@@ -117,36 +154,16 @@ function register(device){
 			upsert:true
 		})
 
-		
 		.then( () => {
 			cli.close( () => {
 				log('Closing connection after trying to update a ' + device.name)
-			})
+			} )
 		})
-	
-	})	
 
+	})	
 	.catch( (err) => {
 		log('Unable to connect to Mongo, throwing' + err)
-	})
-
-	.then(() => { 
-		axios({
-			method:'post',
-			url:'http://bot:3000/registered/',
-			data:device
-		}).then( (res) => {
-			if(res.status === 200) {
-
-				log('Successfully registered ' + device.name + ' with ' + device.ip + ' at ' + device.date) 
-
-			} else{
-				log('Res is not 200, it is ' + res.status + ', please, check.')
-			}
-		}).catch( (err) => {
-			log('Unable to register ' + device.name + ' with ' + device.ip + ' at ' + device.date + '\n Throwing ' + err)
-			throw err
-		})
+		return false;
 	})
 
 }
@@ -195,9 +212,42 @@ app.post('/api/register/', (req, res) => {
 		ip:ip
 	}
 
-	register(device)
+	// I definetely need some comments in here
+	checkExistance(device)
+		.then( (result) => {
 
-	res.sendStatus(200)
+			// checkExistance returns us if it exists or not
+			// So if it does not (!result), we register it 
+			if (!result) {
+				register(device).then( (result) => {
+					post('/api/bot/register', device)
+					res.sendStatus(201)
+				} )
+			} else {
+
+			// If it exists => we're checking if it is online
+
+				checkOnline(device)
+					.then( (result) => {
+					
+						// It is not - updating it and sending a message, that it got back online
+						if (!result){
+							register(device).then( () => {
+								res.sendStatus(202)
+								post('/api/bot/update', device);
+							} )
+
+						// If it is - updating it without messaging anything
+						} else {
+							register(device).then( () => {
+								res.sendStatus(200)
+							} )
+						}
+
+					} )
+
+			}
+		} )
 
 })
 
