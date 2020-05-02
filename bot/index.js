@@ -29,7 +29,7 @@ app.post('/message', (req, res) => {
 
 app.post('/registered', (req, res) => {
 
-	bot.sendMessage(boss, `${req.body.name} got online.\nIP: ${req.body.ip.split(':')[3]}\n${req.body.date}`)
+	bot.sendMessage(boss, `${req.body.name} got online.\nIP: ${req.body.ip}\n${req.body.date}`)
 	res.sendStatus(200)
 
 })
@@ -104,14 +104,14 @@ bot.onText(/\/status/, (msg) => {
 			
 			for (i of res.data) {
 
-				i.date = new Date(i.date)
+				i.date = new Date(i.ate)
 
 				i.dateStr = `${i.date.getHours()+1}:${i.date.getMinutes()+1}:${i.date.getSeconds()+1} ${i.date.getDate()}.${i.date.getMonth()+1}.${i.date.getFullYear()}`
 
 				resString = resString + 
 					`${i.name}: ${i.status}\n` + 
 					`Last Auth: ${i.dateStr}\n` +
-					`IP: ${i.ip.split(':')[3]}\n\n`
+					`IP: ${i.ip}\n\n`
 			}
 
 			bot.sendMessage(boss, resString)
