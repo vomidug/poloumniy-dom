@@ -22,6 +22,22 @@ function log(text){
 	bot.sendMessage(boss, text)
 } 
 
+function get(url, params){
+        return axios({
+                method:"GET",
+                url:url,
+                params:params
+        })
+}
+
+function post(url, data){
+        return axios({
+                method:"POST",
+                url:url,
+                data:data
+        })
+}
+
 app.post('/message', (req, res) => {
 	bot.sendMessage(boss, 'A message from ' + req.body.from + '\n' + req.body.data)
 	res.sendStatus(200)
