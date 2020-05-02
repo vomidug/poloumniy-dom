@@ -13,7 +13,7 @@ app.use(bodyParser.json())
 
 const boss = 1823380
 
-const PORT = process.env.port || 16682
+const PORT = process.env.port || 3000
 
 const axios = require('axios');
 
@@ -37,7 +37,7 @@ app.post('/registered', (req, res) => {
 bot.onText(/\/testConnection/, (msg) => {
 
 	axios({
-		url:'http://api:16681/api/conn/test/',
+		url:'http://api:3000/api/conn/test/',
 		method:'get'
 	}).then( (res) => {
 
@@ -54,7 +54,7 @@ bot.onText(/\/testSomeShit/, ( msg ) => {
 
 	axios({
 		method:'post',
-		url:'http://api:16681/api/register',
+		url:'http://api:3000/api/register',
 		data:{
 			id:'Someshit'
 		}
@@ -76,7 +76,7 @@ bot.onText(/\/testArch/, ( msg ) => {
 
 	axios({
 		method:'post',
-		url:'http://api:16681/api/register',
+		url:'http://api:3000/api/register',
 		data:{
 			id:'Archlinux'
 		}
@@ -96,7 +96,7 @@ bot.onText(/\/testArch/, ( msg ) => {
 
 bot.onText(/\/status/, (msg) => {
 
-	axios.get('http://api:16681/api/db/getAll')
+	axios.get('http://api:3000/api/db/getAll')
 		.then( (res) => {
 			log('Successfully got a response of getAll: ' + JSON.stringify(res.data))
 
@@ -126,7 +126,7 @@ bot.onText(/\/status/, (msg) => {
 
 bot.onText(/\/testDB/, (msg) => {
 
-	axios.get('http://api:16681/api/db/test/').then( (res) => {
+	axios.get('http://api:3000/api/db/test/').then( (res) => {
 
 		if(res.status === 200){
 			bot.sendMessage(boss, 'Mongo feels ok')

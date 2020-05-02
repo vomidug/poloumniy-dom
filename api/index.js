@@ -8,7 +8,7 @@ var axios = require('axios')
 
 mongoclient = new mongo(mongoUri, {useNewUrlParser: true, useUnifiedTopology:true})
 
-const PORT = process.env.port || 16681
+const PORT = process.env.port || 3000
 
 var app = express();
 
@@ -32,11 +32,10 @@ function connect() {
 function log(text){
 
 	console.log(text)
-
 	
 	axios({
 		method: 'post',
-		url: 'http://bot:16682/message/',
+		url: 'http://bot:3000/message/',
 		data: {
 			from:'api',
 			data:text
@@ -118,7 +117,7 @@ function register(device){
 	.then(() => { 
 		axios({
 			method:'post',
-			url:'http://bot:16682/registered/',
+			url:'http://bot:3000/registered/',
 			data:device
 		}).then( (res) => {
 			if(res.status === 200) {
@@ -171,7 +170,6 @@ app.post('/api/register/', (req, res) => {
 
 	log(JSON.stringify(req.body))
 
-
 	date = new Date()
 	date.setHours(date.getHours()+3)
 
@@ -181,11 +179,7 @@ app.post('/api/register/', (req, res) => {
 		ip:ip
 	}
 
-	//if (checkExistance(device)){	
 	register(device)
-	//} else {
-		
-	//}
 
 	res.sendStatus(200)
 
