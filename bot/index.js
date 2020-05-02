@@ -120,7 +120,7 @@ bot.onText(/\/status/, (msg) => {
 			
 			for (i of res.data) {
 
-				i.date = new Date(i.ate)
+				i.date = new Date(i.date)
 
 				i.dateStr = `${i.date.getHours()+1}:${i.date.getMinutes()+1}:${i.date.getSeconds()+1} ${i.date.getDate()}.${i.date.getMonth()+1}.${i.date.getFullYear()}`
 
