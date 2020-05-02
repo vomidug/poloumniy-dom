@@ -7,7 +7,8 @@ services:
     ports:
     - 16681:16681
     networks:
-    - bot
+    - housebot
+    - main
     depends_on: 
     - bot
     - mongo
@@ -16,7 +17,8 @@ services:
     build: bot/
     restart: unless-stopped
     networks:
-    - bot
+    - housebot
+    - main
 
   mongo:
     image: 'mongo'
@@ -24,11 +26,13 @@ services:
     volumes:
     - mongo:/var/lib/mongodb
     networks:
-    - bot
+    - housebot
 
 volumes:
   mongo:
 
 networks:
-  bot:
+  housebot:
+    external: true
+  main:
     external: true
