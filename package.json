@@ -4,7 +4,7 @@
   "description": "vomidug's smart home base",
   "main": "docker-compose.yml",
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "express": "^4.17.1",
     "mongodb": "^3.5.6",
     "node-telegram-bot-api": "^0.40.0"
